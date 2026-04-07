@@ -1,7 +1,9 @@
 # 洛克王国世界 对战伤害计算器
 
 基于 Next.js 开发的洛克王国世界 对战伤害计算器，纯前端实现，支持实时计算精灵伤害。
+
 灵感来[pokemon showdown 伤害计算器](https://calc.pokemonshowdown.com/)。
+
 目前为初始测试版本，可能含有大量错误，欢迎在issue中反馈 bug。
 
 ## 功能特性
