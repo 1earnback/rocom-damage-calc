@@ -59,15 +59,6 @@ cd website
 pnpm install
 ```
 
-### 创建数据文件链接
-
-数据文件通过软链接到 public 目录：
-
-```bash
-ln -s /home/user/lkwg_tools/data/sprites.json /home/user/lkwg_tools/website/public/data/sprites.json
-ln -s /home/user/lkwg_tools/data/skills_all.csv /home/user/lkwg_tools/website/public/data/skills_all.csv
-```
-
 ### 启动开发服务器
 
 ```bash
@@ -159,11 +150,9 @@ HP = [1.7 × 种族值 + 个体值 × 6 × 0.85 + 70] × (1 + 性格修正) + 50
 ## 待实现功能
 
 ⏳ **高级特性**（可选扩展）
-- 更完整的特性系统（24+ 特性效果）
-- 天气系统（雪天、沙暴等）
-- 应对系统（应对攻击/防御/状态）
-- 连击系统优化
-- 减伤系统（多个减伤系数相乘）
+- 完整的特性、技能系统（愿力冲击技能的属性选择）与联动
+- 连击系统与特性的联动
+- 天气系统（雨天加成）
 
 ⏳ **性能优化**（已完成基础优化，可进一步优化）
 - 数据分块加载实现
@@ -172,14 +161,10 @@ HP = [1.7 × 种族值 + 个体值 × 6 × 0.85 + 70] × (1 + 性格修正) + 50
 
 ⏳ **UI 增强功能**（可选）
 - 属性克制关系颜色标注
-- 伤害结果进度条和可视化图表
-- 更多视觉反馈和动画效果
 - 配置保存（用户需求变更）
+- 1对多配置的计算
 
 ## 注意事项
 
 1. 本项目数据来源于[rocom-data](https://github.com/AofeiLi-code/rocom-data)，仅供学习交流使用
-
-## 许可证
-
-本项目数据源自 BWIKI，禁止商业使用。
+2. 请勿用于商业用途，后果自负
