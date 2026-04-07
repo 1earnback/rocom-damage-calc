@@ -1,0 +1,189 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - heading "洛克王国世界-对战伤害计算器" [level=1] [ref=e4]
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - heading "攻击方配置" [level=2] [ref=e7]
+          - generic [ref=e8]:
+            - generic [ref=e11]: 精灵图
+            - generic [ref=e12]:
+              - generic [ref=e13]:
+                - generic [ref=e14]: 选择精灵
+                - combobox "搜索精灵..." [ref=e15]
+              - generic [ref=e16]:
+                - generic [ref=e17]: 性格
+                - combobox [ref=e18]:
+                  - option "胆小（速度↑物攻↓）"
+                  - option "急躁（速度↑物防↓）"
+                  - option "天真（速度↑特防↓）"
+                  - option "开朗（速度↑特攻↓）"
+                  - option "固执（物攻↑特攻↓）"
+                  - option "勇敢（物攻↑速度↓）"
+                  - option "调皮（物攻↑特防↓）"
+                  - option "孤独（物攻↑物防↓）"
+                  - option "保守（特攻↑物攻↓）"
+                  - option "冷静（特攻↑速度↓）"
+                  - option "马虎（特攻↑特防↓）"
+                  - option "稳重（特攻↑物防↓）"
+                  - option "淘气（物防↑特攻↓）"
+                  - option "大胆（物防↑物攻↓）"
+                  - option "悠闲（物防↑速度↓）"
+                  - option "懒散（物防↑特防↓）"
+                  - option "沉着（特防↑物攻↓）"
+                  - option "慎重（特防↑特攻↓）"
+                  - option "温顺（特防↑物防↓）"
+                  - option "狂妄（特防↑速度↓）"
+                  - option "认真（特攻↑生命↓）" [selected]
+                  - option "实干（特防↑生命↓）"
+                  - option "坦率（物攻↑生命↓）"
+                  - option "害羞（物防↑生命↓）"
+                  - option "浮躁（速度↑生命↓）"
+                  - option "沉默（生命↑物攻↓）"
+                  - option "平和（生命↑特攻↓）"
+                  - option "理智（生命↑物防↓）"
+                  - option "犹豫（生命↑特防↓）"
+                  - option "紧张（生命↑速度↓）"
+          - generic [ref=e19]:
+            - heading "个体值 (0-10)" [level=3] [ref=e20]
+            - generic [ref=e21]:
+              - generic [ref=e22]:
+                - checkbox [checked] [ref=e23]
+                - generic [ref=e24]: 生命
+                - spinbutton [ref=e25]: "10"
+              - generic [ref=e26]:
+                - checkbox [ref=e27]
+                - generic [ref=e28]: 物攻
+                - spinbutton [disabled] [ref=e29]: "0"
+              - generic [ref=e30]:
+                - checkbox [ref=e31]
+                - generic [ref=e32]: 特攻
+                - spinbutton [disabled] [ref=e33]: "0"
+              - generic [ref=e34]:
+                - checkbox [ref=e35]
+                - generic [ref=e36]: 物防
+                - spinbutton [disabled] [ref=e37]: "0"
+              - generic [ref=e38]:
+                - checkbox [ref=e39]
+                - generic [ref=e40]: 特防
+                - spinbutton [disabled] [ref=e41]: "0"
+              - generic [ref=e42]:
+                - checkbox [ref=e43]
+                - generic [ref=e44]: 速度
+                - spinbutton [disabled] [ref=e45]: "0"
+          - generic [ref=e46]:
+            - heading "能力修正 (%)" [level=3] [ref=e47]
+            - generic [ref=e48]:
+              - generic [ref=e49]:
+                - text: 物攻
+                - spinbutton [ref=e50]: "0"
+              - generic [ref=e51]:
+                - text: 物防
+                - spinbutton [ref=e52]: "0"
+              - generic [ref=e53]:
+                - text: 特攻
+                - spinbutton [ref=e54]: "0"
+              - generic [ref=e55]:
+                - text: 特防
+                - spinbutton [ref=e56]: "0"
+              - generic [ref=e57]:
+                - text: 速度
+                - spinbutton [ref=e58]: "0"
+          - generic [ref=e59]:
+            - heading "战斗特性" [level=3] [ref=e60]
+            - generic [ref=e61]: 无可用战斗特性
+        - generic [ref=e62]:
+          - heading "技能选择" [level=2] [ref=e63]
+          - generic [ref=e65]:
+            - generic [ref=e66]: 选择技能
+            - combobox "搜索技能..." [ref=e67]
+        - generic [ref=e68]:
+          - heading "防守方配置" [level=2] [ref=e69]
+          - generic [ref=e70]:
+            - generic [ref=e73]: 精灵图
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - generic [ref=e76]: 选择精灵
+                - combobox "搜索精灵..." [ref=e77]
+              - generic [ref=e78]:
+                - generic [ref=e79]: 性格
+                - combobox [ref=e80]:
+                  - option "胆小（速度↑物攻↓）"
+                  - option "急躁（速度↑物防↓）"
+                  - option "天真（速度↑特防↓）"
+                  - option "开朗（速度↑特攻↓）"
+                  - option "固执（物攻↑特攻↓）"
+                  - option "勇敢（物攻↑速度↓）"
+                  - option "调皮（物攻↑特防↓）"
+                  - option "孤独（物攻↑物防↓）"
+                  - option "保守（特攻↑物攻↓）"
+                  - option "冷静（特攻↑速度↓）"
+                  - option "马虎（特攻↑特防↓）"
+                  - option "稳重（特攻↑物防↓）"
+                  - option "淘气（物防↑特攻↓）"
+                  - option "大胆（物防↑物攻↓）"
+                  - option "悠闲（物防↑速度↓）"
+                  - option "懒散（物防↑特防↓）"
+                  - option "沉着（特防↑物攻↓）"
+                  - option "慎重（特防↑特攻↓）"
+                  - option "温顺（特防↑物防↓）"
+                  - option "狂妄（特防↑速度↓）"
+                  - option "认真（特攻↑生命↓）" [selected]
+                  - option "实干（特防↑生命↓）"
+                  - option "坦率（物攻↑生命↓）"
+                  - option "害羞（物防↑生命↓）"
+                  - option "浮躁（速度↑生命↓）"
+                  - option "沉默（生命↑物攻↓）"
+                  - option "平和（生命↑特攻↓）"
+                  - option "理智（生命↑物防↓）"
+                  - option "犹豫（生命↑特防↓）"
+                  - option "紧张（生命↑速度↓）"
+          - generic [ref=e81]:
+            - heading "个体值 (0-10)" [level=3] [ref=e82]
+            - generic [ref=e83]:
+              - generic [ref=e84]:
+                - checkbox [checked] [ref=e85]
+                - generic [ref=e86]: 生命
+                - spinbutton [ref=e87]: "10"
+              - generic [ref=e88]:
+                - checkbox [ref=e89]
+                - generic [ref=e90]: 物攻
+                - spinbutton [disabled] [ref=e91]: "0"
+              - generic [ref=e92]:
+                - checkbox [ref=e93]
+                - generic [ref=e94]: 特攻
+                - spinbutton [disabled] [ref=e95]: "0"
+              - generic [ref=e96]:
+                - checkbox [ref=e97]
+                - generic [ref=e98]: 物防
+                - spinbutton [disabled] [ref=e99]: "0"
+              - generic [ref=e100]:
+                - checkbox [ref=e101]
+                - generic [ref=e102]: 特防
+                - spinbutton [disabled] [ref=e103]: "0"
+              - generic [ref=e104]:
+                - checkbox [ref=e105]
+                - generic [ref=e106]: 速度
+                - spinbutton [disabled] [ref=e107]: "0"
+          - generic [ref=e108]:
+            - heading "能力修正 (%)" [level=3] [ref=e109]
+            - generic [ref=e110]:
+              - generic [ref=e111]:
+                - text: 物攻
+                - spinbutton [ref=e112]: "0"
+              - generic [ref=e113]:
+                - text: 物防
+                - spinbutton [ref=e114]: "0"
+              - generic [ref=e115]:
+                - text: 特攻
+                - spinbutton [ref=e116]: "0"
+              - generic [ref=e117]:
+                - text: 特防
+                - spinbutton [ref=e118]: "0"
+              - generic [ref=e119]:
+                - text: 速度
+                - spinbutton [ref=e120]: "0"
+          - generic [ref=e121]:
+            - heading "战斗特性" [level=3] [ref=e122]
+            - generic [ref=e123]: 无可用战斗特性
+  - alert [ref=e124]

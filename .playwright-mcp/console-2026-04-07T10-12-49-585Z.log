@@ -1,0 +1,6 @@
+[    1707ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://1earnback.github.io/data/sprites.json:0
+[    1732ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://1earnback.github.io/favicon.ico:0
+[    1734ms] [ERROR] Failed to load data: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at https://1earnback.github.io/rocom-damage-calc/_next/static/chunks/app/page-b00e6b3f0f46ff52.js:1:6885
+    at L (https://1earnback.github.io/rocom-damage-calc/_next/static/chunks/app/page-b00e6b3f0f46ff52.js:1:7145) @ https://1earnback.github.io/rocom-damage-calc/_next/static/chunks/23-c059a088e68474f8.js:0
