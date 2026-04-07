@@ -1,10 +1,11 @@
 # 洛克王国世界 对战伤害计算器
+叠甲： AI vibecoding.. 自用程序 目前版本可能存在大量逻辑错误，欢迎在issue中反馈 bug。
 
 基于 Next.js 开发的洛克王国世界 对战伤害计算器，纯前端实现，支持实时计算精灵伤害。
 
 灵感来[pokemon showdown 伤害计算器](https://calc.pokemonshowdown.com/)。
 
-目前为初始测试版本，可能含有大量错误，欢迎在issue中反馈 bug。
+github pages 测试地址：https://1earnback.github.io/rocom-damage-calc/
 
 ## 功能特性
 
