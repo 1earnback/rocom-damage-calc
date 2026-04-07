@@ -55,14 +55,15 @@ export default function Home() {
 
   const loadData = async () => {
     try {
-      const pokemonResponse = await fetch('/data/sprites.json');
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+      const pokemonResponse = await fetch(`${basePath}/data/sprites.json`);
       const pokemonContent = await pokemonResponse.text();
       loadPokemonData(pokemonContent);
 
       const names = getAllPokemonNames();
       setPokemonNames(names);
 
-      const skillResponse = await fetch('/data/skills_all.csv');
+      const skillResponse = await fetch(`${basePath}/data/skills_all.csv`);
       const skillContent = await skillResponse.text();
       const skills = parseCSV(skillContent);
       setSkillDb(skills);

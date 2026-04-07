@@ -2,6 +2,9 @@
 const nextConfig = {
   output: 'export',
   basePath: '/rocom-damage-calc',
+  env: {
+    NEXT_PUBLIC_BASE_PATH: '/rocom-damage-calc',
+  },
   images: {
     unoptimized: true,
   },
