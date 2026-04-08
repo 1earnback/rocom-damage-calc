@@ -227,3 +227,20 @@ export interface Nature {
   boost_stat: string | null;
   reduce_stat: string | null;
 }
+
+export interface SkillSpecialConfig {
+  type: 'energy_to_power' | 'hp_to_power' | 'custom';
+  userInput?: {
+    label: string;
+    placeholder: string;
+    min: number;
+    max: number;
+    defaultValue: number;
+  };
+  powerMapping?: Record<number, number>;
+  basePower?: number;
+  reductionPerHpLoss?: number;
+  hpLossInterval?: number;
+}
+
+export type SkillSpecialConfigs = Record<string, SkillSpecialConfig>;

@@ -18,6 +18,7 @@ export function calculateDamage(
     defenderAbilities?: PokemonConfig['abilities'];
     attackerOriginalAbility?: string;
     defenderOriginalAbility?: string;
+    specialSkillPower?: number;
   } = {}
 ): DamageResult {
   const {
@@ -35,7 +36,13 @@ export function calculateDamage(
   } = options;
 
   let damageReductions = [...initialDamageReductions];
-  let effective_power = Math.max(0, skill.power * counterPowerMult + attacker.power_bonus + extraPowerBonus);
+  let powerFromSpecialConfig = 0;
+
+  if (options.specialSkillPower !== undefined) {
+    powerFromSpecialConfig = options.specialSkillPower;
+  }
+
+  let effective_power = Math.max(0, skill.power * counterPowerMult + attacker.power_bonus + extraPowerBonus + powerFromSpecialConfig);
 
   const triggeredAbilities: string[] = [];
   const notTriggeredAbilities: string[] = [];

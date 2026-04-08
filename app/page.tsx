@@ -12,6 +12,7 @@ import {
 } from '@/lib/pokemon';
 import { parseCSV, getSkill } from '@/lib/skill';
 import { calculateDamage, createDefaultPokemon, createDefaultSkill } from '@/lib/damage-calc';
+import { getSkillSpecialConfig, getPowerFromInput, hasSpecialConfig } from '@/lib/skill-config';
 import RadarChart from '@/components/RadarChart';
 
 export default function Home() {
@@ -49,6 +50,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [includeAbility, setIncludeAbility] = useState(true);
   const [dataLoadError, setDataLoadError] = useState<string | null>(null);
+  const [specialSkillInput, setSpecialSkillInput] = useState<number>(0);
 
   useEffect(() => {
     loadData();
@@ -86,16 +88,22 @@ export default function Home() {
     const attacker = computeBattleStats(attackerData, attackerConfig);
     const defender = computeBattleStats(defenderData, defenderConfig);
 
+    let specialSkillPower = undefined;
+    if (hasSpecialConfig(skillName)) {
+      specialSkillPower = getPowerFromInput(skillName, specialSkillInput);
+    }
+
     const result = calculateDamage(attacker, defender, skill, {
       includeAbility,
       attackerAbilities: attackerConfig.abilities,
       defenderAbilities: defenderConfig.abilities,
       attackerOriginalAbility: attackerData.ability.name,
       defenderOriginalAbility: defenderData.ability.name,
+      specialSkillPower,
     });
 
     setDamageResult(result);
-  }, [attackerName, defenderName, skillName, attackerConfig, defenderConfig, skillDb, loading, includeAbility]);
+  }, [attackerName, defenderName, skillName, attackerConfig, defenderConfig, skillDb, loading, includeAbility, specialSkillInput]);
 
   const loadData = async () => {
     try {
@@ -261,7 +269,13 @@ export default function Home() {
                   type="text"
                   list="skills"
                   value={skillName}
-                  onChange={(e) => setSkillName(e.target.value)}
+                  onChange={(e) => {
+                    setSkillName(e.target.value);
+                    const config = getSkillSpecialConfig(e.target.value);
+                    if (config?.userInput) {
+                      setSpecialSkillInput(config.userInput.defaultValue);
+                    }
+                  }}
                   className="w-full p-3 text-gray-800 rounded-lg"
                   placeholder="搜索技能..."
                 />
@@ -283,6 +297,34 @@ export default function Home() {
                     显示 {availableSkills.length} 个可学伤害技能
                   </div>
                 )}
+
+                {skillName && hasSpecialConfig(skillName) && (() => {
+                  const config = getSkillSpecialConfig(skillName);
+                  if (!config || !config.userInput) return null;
+
+                  return (
+                    <div className="mt-4">
+                      <label className="block text-white mb-2">
+                        {config.userInput.label}
+                      </label>
+                       <input
+                        type="number"
+                        min={config.userInput.min}
+                        max={config.userInput.max}
+                        value={specialSkillInput}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 0;
+                          setSpecialSkillInput(Math.max(config.userInput!.min, Math.min(config.userInput!.max, value)));
+                        }}
+                        className="w-full p-3 text-gray-800 rounded-lg"
+                        placeholder={config.userInput.placeholder}
+                      />
+                      <div className="text-white text-xs mt-1">
+                        当前威力: {getPowerFromInput(skillName, specialSkillInput)}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {damageResult && (
