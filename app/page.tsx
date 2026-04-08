@@ -48,29 +48,76 @@ export default function Home() {
   const [damageResult, setDamageResult] = useState<DamageResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [includeAbility, setIncludeAbility] = useState(true);
+  const [dataLoadError, setDataLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
   }, []);
 
+  async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const response = await fetch(url);
+        if (response.ok) return response;
+        if (i === retries - 1) throw new Error(`HTTP ${response.status}`);
+      } catch (error) {
+        if (i === retries - 1) throw error;
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      }
+    }
+    throw new Error('Max retries reached');
+  }
+
+  useEffect(() => {
+    if (loading || !attackerName || !defenderName || !skillName) {
+      setDamageResult(null);
+      return;
+    }
+
+    const attackerData = getPokemonData(attackerName);
+    const defenderData = getPokemonData(defenderName);
+    const skill = getSkill(skillName, skillDb);
+
+    if (!attackerData || !defenderData) {
+      setDamageResult(null);
+      return;
+    }
+
+    const attacker = computeBattleStats(attackerData, attackerConfig);
+    const defender = computeBattleStats(defenderData, defenderConfig);
+
+    const result = calculateDamage(attacker, defender, skill, {
+      includeAbility,
+      attackerAbilities: attackerConfig.abilities,
+      defenderAbilities: defenderConfig.abilities,
+      attackerOriginalAbility: attackerData.ability.name,
+      defenderOriginalAbility: defenderData.ability.name,
+    });
+
+    setDamageResult(result);
+  }, [attackerName, defenderName, skillName, attackerConfig, defenderConfig, skillDb, loading, includeAbility]);
+
   const loadData = async () => {
     try {
       const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-      const pokemonResponse = await fetch(`${basePath}/data/sprites.json`);
+
+      const pokemonResponse = await fetchWithRetry(`${basePath}/data/sprites.json`, 3);
       const pokemonContent = await pokemonResponse.text();
       loadPokemonData(pokemonContent);
 
       const names = getAllPokemonNames();
       setPokemonNames(names);
 
-      const skillResponse = await fetch(`${basePath}/data/skills_all.csv`);
+      const skillResponse = await fetchWithRetry(`${basePath}/data/skills_all.csv`, 3);
       const skillContent = await skillResponse.text();
       const skills = parseCSV(skillContent);
       setSkillDb(skills);
 
+      setDataLoadError(null);
       setLoading(false);
     } catch (error) {
       console.error('Failed to load data:', error);
+      setDataLoadError(error instanceof Error ? error.message : '数据加载失败，请刷新页面重试');
       setLoading(false);
     }
   };
@@ -146,6 +193,32 @@ export default function Home() {
             洛克王国世界-对战伤害计算器
           </h1>
           <div className="text-white text-center">加载数据中...</div>
+        </div>
+      </main>
+    );
+  }
+
+  if (dataLoadError) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-4xl font-bold text-white text-center mb-8">
+            洛克王国世界-对战伤害计算器
+          </h1>
+          <div className="max-w-md mx-auto bg-red-900/80 text-white p-6 rounded-lg text-center">
+            <div className="text-2xl mb-4">⚠️ 加载失败</div>
+            <div className="mb-4">{dataLoadError}</div>
+            <button
+              onClick={() => {
+                setDataLoadError(null);
+                setLoading(true);
+                loadData();
+              }}
+              className="bg-white text-red-900 px-6 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
+            >
+              重新加载
+            </button>
+          </div>
         </div>
       </main>
     );
