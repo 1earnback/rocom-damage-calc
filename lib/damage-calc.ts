@@ -1,6 +1,51 @@
 import { Pokemon, Skill, DamageResult, SkillCategory, Weather, Type, StatusType, PokemonConfig } from './types/index';
 import { getTypeEffectiveness } from './type-chart';
 import { getAbilityEffect, applyAbilityToDamage } from './ability';
+import { AbilityParser, AbilityContext, mergeAbilityResults } from './ability-parser';
+
+function applyAbilitiesFromParser(
+  attacker: Pokemon,
+  defender: Pokemon,
+  skill: Skill,
+  turn: number,
+  attackerAbilities: Record<string, { enabled: boolean; params: Record<string, number> }>,
+  defenderAbilities: Record<string, { enabled: boolean; params: Record<string, number> }>
+): {
+  attackEffect: any;
+  defenseEffect: any;
+} {
+  const parser = new AbilityParser();
+
+  let attackEffect = parser.getDefaultEffect();
+  for (const [abilityId, config] of Object.entries(attackerAbilities)) {
+    if (config.enabled) {
+      const effect = parser.getEffect(abilityId, {
+        pokemon: attacker,
+        skill,
+        turn,
+        opponent: defender,
+        userParams: config.params
+      });
+      attackEffect = mergeAbilityResults(attackEffect, effect);
+    }
+  }
+
+  let defenseEffect = parser.getDefaultEffect();
+  for (const [abilityId, config] of Object.entries(defenderAbilities)) {
+    if (config.enabled) {
+      const effect = parser.getEffect(abilityId, {
+        pokemon: defender,
+        skill,
+        turn,
+        opponent: attacker,
+        userParams: config.params
+      });
+      defenseEffect = mergeAbilityResults(defenseEffect, effect);
+    }
+  }
+
+  return { attackEffect, defenseEffect };
+}
 
 export function calculateDamage(
   attacker: Pokemon,
@@ -48,71 +93,18 @@ export function calculateDamage(
   const notTriggeredAbilities: string[] = [];
 
   if (includeAbility && attackerAbilities && defenderAbilities) {
-    const getAbilityEffectByName = (abilityName: string, pokemon: Pokemon) => {
-      const tempPokemon = { ...pokemon, ability: abilityName };
-      return getAbilityEffect(tempPokemon, skill, 1);
-    };
+    const { attackEffect, defenseEffect } = applyAbilitiesFromParser(
+      attacker, defender, skill, turn, attackerAbilities, defenderAbilities
+    );
 
-    if (attackerOriginalAbility === '向心力') {
-      if (attackerAbilities.centripetalForce) {
-        const abilityEffect = getAbilityEffectByName('向心力', attacker);
-        effective_power += abilityEffect.powerBonus;
-        triggeredAbilities.push('向心力');
-      } else {
-        notTriggeredAbilities.push('向心力');
-      }
-    }
+    effective_power = effective_power * attackEffect.powerMultiplier + attackEffect.powerBonus;
 
-    if (attackerOriginalAbility === '凶煞') {
-      if (attackerAbilities.fierceDoom) {
-        const abilityEffect = getAbilityEffectByName('凶煞', attacker);
-        effective_power *= abilityEffect.powerMultiplier;
-        triggeredAbilities.push('凶煞');
-      } else {
-        notTriggeredAbilities.push('凶煞');
-      }
-    }
+    const totalAttackBonus = 1 + attackEffect.attackBonus + attackEffect.spAttackBonus;
+    const totalDefenseBonus = 1 + defenseEffect.defenseBonus + defenseEffect.spDefenseBonus;
 
-    if (attackerOriginalAbility === '目空') {
-      if (attackerAbilities.emptySight) {
-        const abilityEffect = getAbilityEffectByName('目空', attacker);
-        effective_power *= abilityEffect.powerMultiplier;
-        triggeredAbilities.push('目空');
-      } else {
-        notTriggeredAbilities.push('目空');
-      }
-    }
-
-    if (attackerOriginalAbility === '专注力') {
-      if (attackerAbilities.focusPower && skill.category === SkillCategory.PHYSICAL) {
-        const abilityEffect = getAbilityEffectByName('专注力', attacker);
-        effective_power *= abilityEffect.powerMultiplier;
-        triggeredAbilities.push('专注力');
-      } else if (attackerAbilities.focusPower) {
-        notTriggeredAbilities.push('专注力 (非物理攻击)');
-      }
-    }
-
-    if (attackerOriginalAbility === '魔法增效') {
-      if (attackerAbilities.magicBoost && skill.category === SkillCategory.MAGICAL) {
-        const abilityEffect = getAbilityEffectByName('魔法增效', attacker);
-        effective_power *= abilityEffect.powerMultiplier;
-        triggeredAbilities.push('魔法增效');
-      } else if (attackerAbilities.magicBoost) {
-        notTriggeredAbilities.push('魔法增效 (非魔法攻击)');
-      }
-    }
-
-    if (defenderOriginalAbility === '绝对秩序') {
-      if (defenderAbilities.absoluteOrder && skill.skill_type !== defender.pokemon_type && skill.skill_type !== defender.secondary_type) {
-        const abilityEffect = getAbilityEffectByName('绝对秩序', defender);
-        if (abilityEffect.defenseReduction > 0) {
-          damageReductions.push(abilityEffect.defenseReduction);
-          triggeredAbilities.push('绝对秩序');
-        }
-      } else if (defenderAbilities.absoluteOrder) {
-        notTriggeredAbilities.push('绝对秩序 (同属性攻击)');
-      }
+    if (totalAttackBonus !== 1 || totalDefenseBonus !== 1) {
+      triggeredAbilities.push(attackEffect.description);
+      notTriggeredAbilities.push(defenseEffect.description);
     }
   }
 
