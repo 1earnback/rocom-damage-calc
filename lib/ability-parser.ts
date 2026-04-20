@@ -319,3 +319,17 @@ export class AbilityParser {
     };
   }
 }
+
+export function mergeAbilityResults(a: AbilityResult, b: AbilityResult): AbilityResult {
+  return {
+    triggered: a.triggered || b.triggered,
+    powerMultiplier: a.powerMultiplier * b.powerMultiplier,
+    powerBonus: a.powerBonus + b.powerBonus,
+    attackBonus: a.attackBonus + b.attackBonus,
+    spAttackBonus: a.spAttackBonus + b.spAttackBonus,
+    defenseBonus: a.defenseBonus + b.defenseBonus,
+    spDefenseBonus: a.spDefenseBonus + b.spDefenseBonus,
+    damageReduction: a.damageReduction + b.damageReduction,
+    description: a.description + (a.description && b.description ? ' | ' : '') + b.description
+  };
+}
