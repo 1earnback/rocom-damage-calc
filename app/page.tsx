@@ -14,6 +14,7 @@ import { parseCSV, getSkill } from '@/lib/skill';
 import { calculateDamage, createDefaultPokemon, createDefaultSkill } from '@/lib/damage-calc';
 import { getSkillSpecialConfig, getPowerFromInput, hasSpecialConfig } from '@/lib/skill-config';
 import RadarChart from '@/components/RadarChart';
+import { ABILITY_CONFIGS } from '@/lib/ability-parser';
 
 export default function Home() {
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
@@ -35,7 +36,14 @@ export default function Home() {
     ivs: { hp: 10, atk: 0, spatk: 0, def: 0, spdef: 0, speed: 0 },
     buffs: { atk_boost: 0, def_boost: 0, spatk_boost: 0, spdef_boost: 0, speed_boost: 0 },
     debuffs: { atk_reduce: 0, def_reduce: 0, spatk_reduce: 0, spdef_reduce: 0, speed_reduce: 0 },
-    abilities: { centripetalForce: { enabled: true, params: {} }, fierceDoom: { enabled: true, params: {} }, emptySight: { enabled: true, params: {} }, focusPower: { enabled: true, params: {} }, magicBoost: { enabled: true, params: {} }, absoluteOrder: { enabled: true, params: {} } },
+    abilities: {
+      centripetal_force: { enabled: true, params: {} },
+      fierce_doom: { enabled: true, params: {} },
+      empty_sight: { enabled: true, params: {} },
+      focus_power: { enabled: true, params: {} },
+      magic_boost: { enabled: true, params: {} },
+      absolute_order: { enabled: true, params: {} }
+    },
   });
 
   const [defenderConfig, setDefenderConfig] = useState<PokemonConfig>({
@@ -43,7 +51,14 @@ export default function Home() {
     ivs: { hp: 10, atk: 0, spatk: 0, def: 0, spdef: 0, speed: 0 },
     buffs: { atk_boost: 0, def_boost: 0, spatk_boost: 0, spdef_boost: 0, speed_boost: 0 },
     debuffs: { atk_reduce: 0, def_reduce: 0, spatk_reduce: 0, spdef_reduce: 0, speed_reduce: 0 },
-    abilities: { centripetalForce: { enabled: true, params: {} }, fierceDoom: { enabled: true, params: {} }, emptySight: { enabled: true, params: {} }, focusPower: { enabled: true, params: {} }, magicBoost: { enabled: true, params: {} }, absoluteOrder: { enabled: true, params: {} } },
+    abilities: {
+      centripetal_force: { enabled: true, params: {} },
+      fierce_doom: { enabled: true, params: {} },
+      empty_sight: { enabled: true, params: {} },
+      focus_power: { enabled: true, params: {} },
+      magic_boost: { enabled: true, params: {} },
+      absolute_order: { enabled: true, params: {} }
+    },
   });
 
   const [damageResult, setDamageResult] = useState<DamageResult | null>(null);
@@ -431,20 +446,9 @@ function ConfigCard({
     speed: '速度',
   };
 
-  const abilityList = [
-    { key: 'centripetalForce' as const, name: '向心力', desc: '前两个有伤技能威力 +30' },
-    { key: 'fierceDoom' as const, name: '凶煞', desc: '队伍存在恶系时，双攻 +50%' },
-    { key: 'emptySight' as const, name: '目空', desc: '非光系技能威力 +25%' },
-    { key: 'focusPower' as const, name: '专注力', desc: '入场首回合，物攻技能威力 +100%' },
-    { key: 'magicBoost' as const, name: '魔法增效', desc: '魔攻技能威力 +70%' },
-    { key: 'absoluteOrder' as const, name: '绝对秩序', desc: '受到非自身属性攻击时伤害 -50%' },
-  ];
-
-  const availableAbilities = abilityList.filter(ability => ability.name === originalAbility);
-
-  const handleAbilityToggle = (key: keyof PokemonConfig['abilities']) => {
-    const abilityConfig = config.abilities[key] || { enabled: false, params: {} };
-    const newAbilities = { ...config.abilities, [key]: { ...abilityConfig, enabled: !abilityConfig.enabled } };
+  const handleAbilityToggle = (abilityId: string) => {
+    const abilityConfig = config.abilities[abilityId as keyof PokemonConfig['abilities']] || { enabled: false, params: {} };
+    const newAbilities = { ...config.abilities, [abilityId]: { ...abilityConfig, enabled: !abilityConfig.enabled } };
     setConfig({ ...config, abilities: newAbilities });
   };
 
@@ -557,32 +561,28 @@ function ConfigCard({
 
       <div className="mt-3">
         <h3 className="text-white text-sm font-bold mb-2">战斗特性</h3>
-        {availableAbilities.length > 0 ? (
-          <div className="space-y-1">
-            {availableAbilities.map((ability) => (
-              <div key={ability.key} className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  id={`ability-${ability.key}-${isAttacker ? 'attacker' : 'defender'}`}
-                  checked={config.abilities[ability.key]?.enabled || false}
-                  onChange={() => handleAbilityToggle(ability.key)}
-                  className="w-3 h-3 min-w-[12px] rounded mt-0.5"
-                />
-                <div className="flex flex-col">
-                  <label
-                    htmlFor={`ability-${ability.key}-${isAttacker ? 'attacker' : 'defender'}`}
-                    className="text-white text-xs font-medium cursor-pointer"
-                  >
-                    {ability.name}
-                  </label>
-                  <span className="text-white/60 text-xs">{ability.desc}</span>
-                </div>
+        <div className="space-y-1">
+          {ABILITY_CONFIGS.map((ability) => (
+            <div key={ability.id} className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                id={`ability-${ability.id}-${isAttacker ? 'attacker' : 'defender'}`}
+                checked={config.abilities[ability.id as keyof PokemonConfig['abilities']]?.enabled || false}
+                onChange={() => handleAbilityToggle(ability.id)}
+                className="w-3 h-3 min-w-[12px] rounded mt-0.5"
+              />
+              <div className="flex flex-col">
+                <label
+                  htmlFor={`ability-${ability.id}-${isAttacker ? 'attacker' : 'defender'}`}
+                  className="text-white text-xs font-medium cursor-pointer"
+                >
+                  {ability.name}
+                </label>
+                <span className="text-white/60 text-xs">{ability.description}</span>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-white/60 text-xs">无可用战斗特性</div>
-        )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
