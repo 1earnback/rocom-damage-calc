@@ -69,3 +69,24 @@ export interface AbilityResult {
   damageReduction: number;
   description: string;
 }
+
+export class SimpleExpressionParser {
+  parse(expr: string, params: Record<string, number>): number {
+    let parsedExpr = expr;
+    for (const [key, value] of Object.entries(params)) {
+      const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      parsedExpr = parsedExpr.replace(new RegExp(`params\\.${escapedKey}`, 'g'), value.toString());
+    }
+
+    return this.evaluateArithmetic(parsedExpr);
+  }
+
+  private evaluateArithmetic(expr: string): number {
+    try {
+      return Function('"use strict"; return (' + expr + ')')();
+    } catch (error) {
+      console.error(`Failed to evaluate expression: ${expr}`, error);
+      return 0;
+    }
+  }
+}
