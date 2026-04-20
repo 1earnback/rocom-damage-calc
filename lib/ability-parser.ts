@@ -333,3 +333,59 @@ export function mergeAbilityResults(a: AbilityResult, b: AbilityResult): Ability
     description: a.description + (a.description && b.description ? ' | ' : '') + b.description
   };
 }
+
+export function applyAbilitiesFromParser(
+  attacker: Pokemon,
+  defender: Pokemon,
+  skill: Skill,
+  turn: number,
+  attackerAbilities: Record<string, { enabled: boolean; params: Record<string, number> }>,
+  defenderAbilities: Record<string, { enabled: boolean; params: Record<string, number> }>
+): {
+  attackEffect: AbilityResult;
+  defenseEffect: AbilityResult;
+} {
+  const defaultResult: AbilityResult = {
+    triggered: false,
+    powerMultiplier: 1,
+    powerBonus: 0,
+    attackBonus: 0,
+    spAttackBonus: 0,
+    defenseBonus: 0,
+    spDefenseBonus: 0,
+    damageReduction: 0,
+    description: ''
+  };
+
+  const parser = new AbilityParser();
+
+  let attackEffect = defaultResult;
+  for (const [abilityId, config] of Object.entries(attackerAbilities)) {
+    if (config.enabled) {
+      const effect = parser.getEffect(abilityId, {
+        pokemon: attacker,
+        skill,
+        turn,
+        opponent: defender,
+        userParams: config.params
+      });
+      attackEffect = mergeAbilityResults(attackEffect, effect);
+    }
+  }
+
+  let defenseEffect = defaultResult;
+  for (const [abilityId, config] of Object.entries(defenderAbilities)) {
+    if (config.enabled) {
+      const effect = parser.getEffect(abilityId, {
+        pokemon: defender,
+        skill,
+        turn,
+        opponent: attacker,
+        userParams: config.params
+      });
+      defenseEffect = mergeAbilityResults(defenseEffect, effect);
+    }
+  }
+
+  return { attackEffect, defenseEffect };
+}

@@ -1,63 +1,7 @@
 import { Pokemon, Skill, DamageResult, SkillCategory, Weather, Type, StatusType, PokemonConfig } from './types/index';
 import { getTypeEffectiveness } from './type-chart';
 import { getAbilityEffect, applyAbilityToDamage } from './ability';
-import { AbilityParser, AbilityContext, mergeAbilityResults } from './ability-parser';
-
-function applyAbilitiesFromParser(
-  attacker: Pokemon,
-  defender: Pokemon,
-  skill: Skill,
-  turn: number,
-  attackerAbilities: Record<string, { enabled: boolean; params: Record<string, number> }>,
-  defenderAbilities: Record<string, { enabled: boolean; params: Record<string, number> }>
-): {
-  attackEffect: any;
-  defenseEffect: any;
-} {
-  const parser = new AbilityParser();
-  const defaultEffect = parser.getEffect('nonexistent', {
-    pokemon: attacker,
-    skill,
-    turn,
-    opponent: defender,
-    userParams: {}
-  });
-  let attackEffect = defaultEffect;
-  for (const [abilityId, config] of Object.entries(attackerAbilities)) {
-    if (config.enabled) {
-      const effect = parser.getEffect(abilityId, {
-        pokemon: attacker,
-        skill,
-        turn,
-        opponent: defender,
-        userParams: config.params
-      });
-      attackEffect = mergeAbilityResults(attackEffect, effect);
-    }
-  }
-
-  let defenseEffect = parser.getEffect('nonexistent', {
-    pokemon: defender,
-    skill,
-    turn,
-    opponent: attacker,
-    userParams: {}
-  });
-  for (const [abilityId, config] of Object.entries(defenderAbilities)) {
-    if (config.enabled) {
-      const effect = parser.getEffect(abilityId, {
-        pokemon: defender,
-        skill,
-        turn,
-        opponent: attacker,
-        userParams: config.params
-      });
-      defenseEffect = mergeAbilityResults(defenseEffect, effect);
-    }
-  }
-
-  return { attackEffect, defenseEffect };
-}
+import { applyAbilitiesFromParser } from './ability-parser';
 
 export function calculateDamage(
   attacker: Pokemon,
