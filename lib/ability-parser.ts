@@ -91,7 +91,105 @@ export class SimpleExpressionParser {
   }
 }
 
-export const ABILITY_CONFIGS: AbilityConfig[] = [];
+export const ABILITY_CONFIGS: AbilityConfig[] = [
+  {
+    id: 'centripetal_force',
+    name: '向心力',
+    description: '前两个有伤技能威力 +30',
+    side: 'attacker',
+    params: [],
+    effects: [
+      {
+        conditions: [
+          { type: 'skill_slot', value: [1, 2] }
+        ],
+        power: { type: 'fixed', value: '30' }
+      }
+    ]
+  },
+
+  {
+    id: 'fierce_doom',
+    name: '凶煞',
+    description: '队伍存在恶系时，双攻 +50%',
+    side: 'attacker',
+    params: [],
+    effects: [
+      {
+        conditions: [
+          { type: 'team_has_attribute', value: Type.DARK }
+        ],
+        attack: { type: 'percentage', value: '50' },
+        sp_attack: { type: 'percentage', value: '50' }
+      }
+    ]
+  },
+
+  {
+    id: 'empty_sight',
+    name: '目空',
+    description: '非光系技能威力 +25%',
+    side: 'attacker',
+    params: [],
+    effects: [
+      {
+        conditions: [
+          { type: 'not_skill_attribute', value: Type.PSYCHIC }
+        ],
+        power: { type: 'percentage', value: '25' }
+      }
+    ]
+  },
+
+  {
+    id: 'focus_power',
+    name: '专注力',
+    description: '入场首回合，物攻技能威力 +100%',
+    side: 'attacker',
+    params: [],
+    effects: [
+      {
+        conditions: [
+          { type: 'turn_is_first' },
+          { type: 'skill_type', value: SkillCategory.PHYSICAL }
+        ],
+        power: { type: 'percentage', value: '100' }
+      }
+    ]
+  },
+
+  {
+    id: 'magic_boost',
+    name: '魔法增效',
+    description: '魔攻技能威力 +70%',
+    side: 'attacker',
+    params: [],
+    effects: [
+      {
+        conditions: [
+          { type: 'skill_type', value: SkillCategory.MAGICAL }
+        ],
+        power: { type: 'percentage', value: '70' }
+      }
+    ]
+  },
+
+  {
+    id: 'absolute_order',
+    name: '绝对秩序',
+    description: '受到非自身属性攻击时伤害 -50%',
+    side: 'defender',
+    params: [],
+    effects: [
+      {
+        conditions: [
+          { type: 'not_pokemon_has_attribute', value: Type.PSYCHIC }
+        ],
+        damage_reducer: { type: 'percentage', value: '50' }
+      }
+    ]
+  }
+];
 
 export class AbilityParser {
   private configs: Map<string, AbilityConfig>;
