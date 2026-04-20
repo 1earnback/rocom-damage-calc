@@ -22,7 +22,7 @@ type AbilityCondition =
   | { type: 'team_has_attribute'; value: Type }
   | { type: 'param_equals'; key: string; value: number };
 
-export { AbilityCondition };
+export type { AbilityCondition };
 
 export interface StatModifier {
   type: 'percentage' | 'fixed';
@@ -88,5 +88,136 @@ export class SimpleExpressionParser {
       console.error(`Failed to evaluate expression: ${expr}`, error);
       return 0;
     }
+  }
+}
+
+export const ABILITY_CONFIGS: AbilityConfig[] = [];
+
+export class AbilityParser {
+  private configs: Map<string, AbilityConfig>;
+  private expressionParser: SimpleExpressionParser;
+
+  constructor() {
+    this.configs = new Map();
+    this.expressionParser = new SimpleExpressionParser();
+    this.loadConfigs();
+  }
+
+  private loadConfigs(): void {
+    ABILITY_CONFIGS.forEach(config => {
+      this.configs.set(config.id, config);
+    });
+  }
+
+  public getEffect(abilityId: string, context: AbilityContext): AbilityResult {
+    const config = this.configs.get(abilityId);
+    if (!config) return this.getDefaultEffect();
+
+    const result: AbilityResult = {
+      triggered: false,
+      powerMultiplier: 1,
+      powerBonus: 0,
+      attackBonus: 0,
+      spAttackBonus: 0,
+      defenseBonus: 0,
+      spDefenseBonus: 0,
+      damageReduction: 0,
+      description: ''
+    };
+
+    for (const effect of config.effects) {
+      if (this.checkConditions(effect.conditions, context)) {
+        result.triggered = true;
+        this.applyEffect(effect, result, context);
+      }
+    }
+
+    result.description = this.buildDescription(config, result);
+    return result;
+  }
+
+  private checkConditions(conditions: AbilityCondition[], ctx: AbilityContext): boolean {
+    return conditions.every(cond => this.checkSingleCondition(cond, ctx));
+  }
+
+  private checkSingleCondition(cond: AbilityCondition, ctx: AbilityContext): boolean {
+    switch (cond.type) {
+      case 'turn_is_first':
+        return ctx.turn === 1;
+      case 'turn_is_nth':
+        return ctx.turn === cond.value;
+      case 'skill_type':
+        return ctx.skill.category === cond.value;
+      case 'skill_attribute':
+        return ctx.skill.skill_type === cond.value;
+      case 'not_skill_attribute':
+        return ctx.skill.skill_type !== cond.value;
+      case 'pokemon_has_attribute':
+        return ctx.pokemon.pokemon_type === cond.value ||
+               ctx.pokemon.secondary_type === cond.value;
+      case 'not_pokemon_has_attribute':
+        return ctx.pokemon.pokemon_type !== cond.value &&
+               ctx.pokemon.secondary_type !== cond.value;
+      case 'skill_slot':
+        if (!ctx.skillSlot) return false;
+        return cond.value.includes(ctx.skillSlot);
+      case 'team_has_attribute':
+        if (!ctx.teamAttributes || ctx.teamAttributes.length === 0) return false;
+        return ctx.teamAttributes.includes(cond.value);
+      case 'param_equals':
+        return ctx.userParams[cond.key] === cond.value;
+      default:
+        return false;
+    }
+  }
+
+  private applyEffect(effect: AbilityEffect, result: AbilityResult, ctx: AbilityContext): void {
+    const parseValue = (mod?: StatModifier): number => {
+      if (!mod) return 0;
+      const value = this.expressionParser.parse(mod.value, ctx.userParams);
+      return mod.type === 'percentage' ? value / 100 : value;
+    };
+
+    if (effect.power) {
+      const value = parseValue(effect.power);
+      if (effect.power.type === 'percentage') {
+        result.powerMultiplier *= (1 + value);
+      } else {
+        result.powerBonus += value;
+      }
+    }
+
+    result.attackBonus += parseValue(effect.attack) || 0;
+    result.spAttackBonus += parseValue(effect.sp_attack) || 0;
+    result.defenseBonus += parseValue(effect.defense) || 0;
+    result.spDefenseBonus += parseValue(effect.sp_defense) || 0;
+    result.damageReduction += parseValue(effect.damage_reducer) || 0;
+  }
+
+  private buildDescription(config: AbilityConfig, result: AbilityResult): string {
+    if (!result.triggered) return '';
+    const parts: string[] = [];
+    if (result.powerMultiplier !== 1) parts.push(`威力 × ${result.powerMultiplier}`);
+    if (result.powerBonus !== 0) parts.push(`威力 ${result.powerBonus}`);
+    if (result.attackBonus !== 0) parts.push(`物攻 ${result.attackBonus > 0 ? '+' : ''}${result.attackBonus * 100}%`);
+    if (result.spAttackBonus !== 0) parts.push(`特攻 ${result.spAttackBonus > 0 ? '+' : ''}${result.spAttackBonus * 100}%`);
+    if (result.defenseBonus !== 0) parts.push(`物防 ${result.defenseBonus > 0 ? '+' : ''}${result.defenseBonus * 100}%`);
+    if (result.spDefenseBonus !== 0) parts.push(`特防 ${result.spDefenseBonus > 0 ? '+' : ''}${result.spDefenseBonus * 100}%`);
+    if (result.damageReduction !== 0) parts.push(`减伤 ${result.damageReduction * 100}%`);
+    return parts.length > 0 ? `${config.name}: ${parts.join(', ')}` : '';
+  }
+
+  private getDefaultEffect(): AbilityResult {
+    return {
+      triggered: false,
+      powerMultiplier: 1,
+      powerBonus: 0,
+      attackBonus: 0,
+      spAttackBonus: 0,
+      defenseBonus: 0,
+      spDefenseBonus: 0,
+      damageReduction: 0,
+      description: ''
+    };
   }
 }
