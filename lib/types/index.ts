@@ -200,14 +200,7 @@ export interface PokemonConfig {
     spdef_reduce: number;
     speed_reduce: number;
   };
-  abilities: {
-    centripetalForce: boolean;  // 向心力
-    fierceDoom: boolean;       // 凶煞
-    emptySight: boolean;       // 目空
-    focusPower: boolean;       // 专注力
-    magicBoost: boolean;       // 魔法增效
-    absoluteOrder: boolean;    // 绝对秩序
-  };
+  abilities: Record<string, { enabled: boolean; params: Record<string, number> }>;
 }
 
 export interface DamageResult {
