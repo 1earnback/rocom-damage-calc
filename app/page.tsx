@@ -35,7 +35,7 @@ export default function Home() {
     ivs: { hp: 10, atk: 0, spatk: 0, def: 0, spdef: 0, speed: 0 },
     buffs: { atk_boost: 0, def_boost: 0, spatk_boost: 0, spdef_boost: 0, speed_boost: 0 },
     debuffs: { atk_reduce: 0, def_reduce: 0, spatk_reduce: 0, spdef_reduce: 0, speed_reduce: 0 },
-    abilities: { centripetalForce: true, fierceDoom: true, emptySight: true, focusPower: true, magicBoost: true, absoluteOrder: true },
+    abilities: { centripetalForce: { enabled: true, params: {} }, fierceDoom: { enabled: true, params: {} }, emptySight: { enabled: true, params: {} }, focusPower: { enabled: true, params: {} }, magicBoost: { enabled: true, params: {} }, absoluteOrder: { enabled: true, params: {} } },
   });
 
   const [defenderConfig, setDefenderConfig] = useState<PokemonConfig>({
@@ -43,7 +43,7 @@ export default function Home() {
     ivs: { hp: 10, atk: 0, spatk: 0, def: 0, spdef: 0, speed: 0 },
     buffs: { atk_boost: 0, def_boost: 0, spatk_boost: 0, spdef_boost: 0, speed_boost: 0 },
     debuffs: { atk_reduce: 0, def_reduce: 0, spatk_reduce: 0, spdef_reduce: 0, speed_reduce: 0 },
-    abilities: { centripetalForce: true, fierceDoom: true, emptySight: true, focusPower: true, magicBoost: true, absoluteOrder: true },
+    abilities: { centripetalForce: { enabled: true, params: {} }, fierceDoom: { enabled: true, params: {} }, emptySight: { enabled: true, params: {} }, focusPower: { enabled: true, params: {} }, magicBoost: { enabled: true, params: {} }, absoluteOrder: { enabled: true, params: {} } },
   });
 
   const [damageResult, setDamageResult] = useState<DamageResult | null>(null);
@@ -443,7 +443,8 @@ function ConfigCard({
   const availableAbilities = abilityList.filter(ability => ability.name === originalAbility);
 
   const handleAbilityToggle = (key: keyof PokemonConfig['abilities']) => {
-    const newAbilities = { ...config.abilities, [key]: !config.abilities[key] };
+    const abilityConfig = config.abilities[key] || { enabled: false, params: {} };
+    const newAbilities = { ...config.abilities, [key]: { ...abilityConfig, enabled: !abilityConfig.enabled } };
     setConfig({ ...config, abilities: newAbilities });
   };
 
@@ -563,7 +564,7 @@ function ConfigCard({
                 <input
                   type="checkbox"
                   id={`ability-${ability.key}-${isAttacker ? 'attacker' : 'defender'}`}
-                  checked={config.abilities[ability.key]}
+                  checked={config.abilities[ability.key]?.enabled || false}
                   onChange={() => handleAbilityToggle(ability.key)}
                   className="w-3 h-3 min-w-[12px] rounded mt-0.5"
                 />

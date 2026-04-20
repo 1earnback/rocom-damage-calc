@@ -15,8 +15,14 @@ function applyAbilitiesFromParser(
   defenseEffect: any;
 } {
   const parser = new AbilityParser();
-
-  let attackEffect = parser.getDefaultEffect();
+  const defaultEffect = parser.getEffect('nonexistent', {
+    pokemon: attacker,
+    skill,
+    turn,
+    opponent: defender,
+    userParams: {}
+  });
+  let attackEffect = defaultEffect;
   for (const [abilityId, config] of Object.entries(attackerAbilities)) {
     if (config.enabled) {
       const effect = parser.getEffect(abilityId, {
@@ -30,7 +36,13 @@ function applyAbilitiesFromParser(
     }
   }
 
-  let defenseEffect = parser.getDefaultEffect();
+  let defenseEffect = parser.getEffect('nonexistent', {
+    pokemon: defender,
+    skill,
+    turn,
+    opponent: attacker,
+    userParams: {}
+  });
   for (const [abilityId, config] of Object.entries(defenderAbilities)) {
     if (config.enabled) {
       const effect = parser.getEffect(abilityId, {
