@@ -81,6 +81,8 @@ interface AbilityContext {
   turn: number;                            // 当前回合
   opponent: Pokemon;                       // 对手精灵
   userParams: Record<string, number>;      // 用户输入的参数值
+  skillSlot?: number;                      // 当前技能在技能槽中的位置（1-4），用于skill_slot条件
+  teamAttributes?: Type[];                 // 队伍中存在的属性列表，用于team_has_attribute条件
 }
 
 // 特性计算结果
@@ -153,7 +155,7 @@ const ABSOLUTE_ORDER_CONFIG: AbilityConfig = {
   effects: [
     {
       conditions: [
-        { type: 'not_pokemon_has_attribute', value: Type.PSYCHIC } // 假设防守方为光系
+        { type: 'not_pokemon_has_attribute', value: Type.PSYCHIC } // 检查技能属性是否与防守方属性不匹配
       ],
       damage_reducer: { type: 'percentage', value: '50' }
     }
@@ -272,11 +274,13 @@ class AbilityParser {
         return ctx.pokemon.pokemon_type !== cond.value &&
                ctx.pokemon.secondary_type !== cond.value;
       case 'skill_slot':
-        // 需要额外传递技能位置信息
-        return true; // 待实现
+        // ctx.skillSlot 为当前技能在技能槽中的位置（1-4）
+        if (!ctx.skillSlot) return false;
+        return cond.value.includes(ctx.skillSlot);
       case 'team_has_attribute':
-        // 需要队伍信息，暂时默认true
-        return true; // 待实现
+        // ctx.teamAttributes 为队伍中存在的属性列表
+        if (!ctx.teamAttributes || ctx.teamAttributes.length === 0) return false;
+        return ctx.teamAttributes.includes(cond.value);
       case 'param_equals':
         return ctx.userParams[cond.key] === cond.value;
       default:
@@ -816,9 +820,9 @@ AbilityParser.getEffect(abilityId, context)
 ## 11. 风险和注意事项
 
 ### 11.1 已知限制
-- 条件类型 `skill_slot` 和 `team_has_attribute` 需要额外的上下文信息，需要扩展 AbilityContext
-- 条件中暂不支持 AND/OR 逻辑组合，需要多个效果配置实现
-- 表达式解析器使用 `Function` 构造器，需确保输入安全性
+- 条件中暂不支持 AND/OR 逻辑组合，需要多个效果配置实现（见第7.2节示例）
+- 表达式解析器使用 `Function` 构造器，需确保输入表达式仅包含数字、运算符和 params.X
+- 部分条件需要额外的上下文信息（skillSlot、teamAttributes）已在 AbilityContext 中定义，使用时需要提供完整上下文
 
 ### 11.2 待扩展功能
 - 支持更多条件类型（如技能威力范围、血量条件等）
