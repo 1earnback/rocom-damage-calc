@@ -1,6 +1,5 @@
 import { Pokemon, Skill, DamageResult, SkillCategory, Weather, Type, StatusType, PokemonConfig } from './types/index';
 import { getTypeEffectiveness } from './type-chart';
-import { getAbilityEffect, applyAbilityToDamage } from './ability';
 import { applyAbilitiesFromParser } from './ability-parser';
 
 export function calculateDamage(
