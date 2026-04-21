@@ -396,3 +396,19 @@ export function applyAbilitiesFromParser(
 
   return { attackEffect, defenseEffect };
 }
+
+/**
+ * 生成初始特性对象，所有特性默认启用
+ */
+export function getInitialAbilities(): Record<string, { enabled: boolean; params: Record<string, number> }> {
+  const result: Record<string, { enabled: boolean; params: Record<string, number> }> = {};
+
+  ABILITY_CONFIGS.forEach(config => {
+    result[config.id] = {
+      enabled: true,
+      params: {}
+    };
+  });
+
+  return result;
+}
