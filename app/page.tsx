@@ -438,6 +438,8 @@ function ConfigCard({
     setConfig({ ...config, abilities: newAbilities });
   };
 
+  const availableAbilities = pokemonName ? getAbilitiesForPokemon(pokemonName) : [];
+
   return (
     <div className="glass-card rounded-xl p-4 max-h-[80vh] overflow-y-auto">
       <h2 className="text-lg font-bold text-white mb-3 sticky top-0 bg-transparent py-1">{title}</h2>
@@ -548,7 +550,7 @@ function ConfigCard({
       <div className="mt-3">
         <h3 className="text-white text-sm font-bold mb-2">战斗特性</h3>
         <div className="space-y-1">
-          {ABILITY_CONFIGS.map((ability) => (
+          {availableAbilities.map((ability) => (
             <div key={ability.id} className="flex items-start gap-2">
               <input
                 type="checkbox"
@@ -568,6 +570,9 @@ function ConfigCard({
               </div>
             </div>
           ))}
+          {pokemonName && availableAbilities.length === 0 && (
+            <div className="text-white/40 text-xs">该精灵的特性暂未支持</div>
+          )}
         </div>
       </div>
     </div>
