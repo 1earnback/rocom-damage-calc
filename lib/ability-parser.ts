@@ -46,6 +46,7 @@ export interface AbilityConfig {
   side: 'attacker' | 'defender' | 'both';
   params: AbilityParam[];
   effects: AbilityEffect[];
+  pokemons: string[];
 }
 
 export interface AbilityContext {
@@ -105,7 +106,8 @@ export const ABILITY_CONFIGS: AbilityConfig[] = [
         ],
         power: { type: 'fixed', value: '30' }
       }
-    ]
+    ],
+    pokemons: []
   },
 
   {
@@ -122,7 +124,8 @@ export const ABILITY_CONFIGS: AbilityConfig[] = [
         attack: { type: 'percentage', value: '50' },
         sp_attack: { type: 'percentage', value: '50' }
       }
-    ]
+    ],
+    pokemons: []
   },
 
   {
@@ -138,7 +141,8 @@ export const ABILITY_CONFIGS: AbilityConfig[] = [
         ],
         power: { type: 'percentage', value: '25' }
       }
-    ]
+    ],
+    pokemons: []
   },
 
   {
@@ -155,7 +159,8 @@ export const ABILITY_CONFIGS: AbilityConfig[] = [
         ],
         power: { type: 'percentage', value: '100' }
       }
-    ]
+    ],
+    pokemons: []
   },
 
   {
@@ -171,7 +176,8 @@ export const ABILITY_CONFIGS: AbilityConfig[] = [
         ],
         power: { type: 'percentage', value: '70' }
       }
-    ]
+    ],
+    pokemons: []
   },
 
   {
@@ -187,7 +193,8 @@ export const ABILITY_CONFIGS: AbilityConfig[] = [
         ],
         damage_reducer: { type: 'percentage', value: '50' }
       }
-    ]
+    ],
+    pokemons: []
   }
 ];
 
