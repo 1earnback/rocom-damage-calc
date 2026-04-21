@@ -14,7 +14,7 @@ import { parseCSV, getSkill } from '@/lib/skill';
 import { calculateDamage, createDefaultPokemon, createDefaultSkill } from '@/lib/damage-calc';
 import { getSkillSpecialConfig, getPowerFromInput, hasSpecialConfig } from '@/lib/skill-config';
 import RadarChart from '@/components/RadarChart';
-import { ABILITY_CONFIGS } from '@/lib/ability-parser';
+import { ABILITY_CONFIGS, getInitialAbilities, getAbilitiesForPokemon } from '@/lib/ability-parser';
 
 export default function Home() {
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
