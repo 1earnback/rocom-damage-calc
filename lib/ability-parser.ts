@@ -160,7 +160,7 @@ export const ABILITY_CONFIGS: AbilityConfig[] = [
         power: { type: 'percentage', value: '100' }
       }
     ],
-    pokemons: []
+    pokemons: ["音速犬"]
   },
 
   {
@@ -398,15 +398,44 @@ export function applyAbilitiesFromParser(
 }
 
 /**
- * 生成初始特性对象，所有特性默认启用
+ * 生成初始特性对象，所有特性默认不启用
  */
 export function getInitialAbilities(): Record<string, { enabled: boolean; params: Record<string, number> }> {
   const result: Record<string, { enabled: boolean; params: Record<string, number> }> = {};
 
   ABILITY_CONFIGS.forEach(config => {
     result[config.id] = {
-      enabled: true,
+      enabled: false,
       params: {}
+    };
+  });
+
+  return result;
+
+}
+
+/**
+ * 为指定精灵生成特性配置，只启用该精灵拥有的特性
+ * @param pokemonName 精灵名称
+ * @param currentAbilities 当前特性配置（保留用户的手动配置）
+ */
+export function getInitialAbilitiesForPokemon(
+  pokemonName: string,
+  currentAbilities?: Record<string, { enabled: boolean; params: Record<string, number> }>
+): Record<string, { enabled: boolean; params: Record<string, number> }> {
+  const result: Record<string, { enabled: boolean; params: Record<string, number> }> = {};
+  const availableAbilityIds = getAbilitiesForPokemon(pokemonName).map(config => config.id);
+
+  ABILITY_CONFIGS.forEach(config => {
+    const isAvailable = availableAbilityIds.includes(config.id);
+    const current = currentAbilities?.[config.id];
+    
+    // 如果该特性对这个精灵可用，则默认启用（除非用户手动关闭了）
+    const wasManuallyDisabled = current && isAvailable && !current.enabled;
+    
+    result[config.id] = {
+      enabled: isAvailable && !wasManuallyDisabled,
+      params: current?.params || {}
     };
   });
 

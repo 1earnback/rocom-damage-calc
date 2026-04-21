@@ -14,7 +14,7 @@ import { parseCSV, getSkill } from '@/lib/skill';
 import { calculateDamage, createDefaultPokemon, createDefaultSkill } from '@/lib/damage-calc';
 import { getSkillSpecialConfig, getPowerFromInput, hasSpecialConfig } from '@/lib/skill-config';
 import RadarChart from '@/components/RadarChart';
-import { ABILITY_CONFIGS, getInitialAbilities, getAbilitiesForPokemon } from '@/lib/ability-parser';
+import { ABILITY_CONFIGS, getInitialAbilities, getAbilitiesForPokemon, getInitialAbilitiesForPokemon } from '@/lib/ability-parser';
 
 export default function Home() {
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
@@ -412,6 +412,13 @@ function ConfigCard({
       }
     }
   }, [pokemonName, config]);
+
+  useEffect(() => {
+    if (pokemonName) {
+      const newAbilities = getInitialAbilitiesForPokemon(pokemonName, config.abilities);
+      setConfig({ ...config, abilities: newAbilities });
+    }
+  }, [pokemonName]);
 
 
 
