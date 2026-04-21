@@ -412,3 +412,12 @@ export function getInitialAbilities(): Record<string, { enabled: boolean; params
 
   return result;
 }
+
+/**
+ * 获取指定精灵的可用特性
+ */
+export function getAbilitiesForPokemon(pokemonName: string): AbilityConfig[] {
+  return ABILITY_CONFIGS.filter(config =>
+    config.pokemons.includes(pokemonName)
+  );
+}
