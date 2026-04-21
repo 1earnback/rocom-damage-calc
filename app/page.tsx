@@ -44,14 +44,7 @@ export default function Home() {
     ivs: { hp: 10, atk: 0, spatk: 0, def: 0, spdef: 0, speed: 0 },
     buffs: { atk_boost: 0, def_boost: 0, spatk_boost: 0, spdef_boost: 0, speed_boost: 0 },
     debuffs: { atk_reduce: 0, def_reduce: 0, spatk_reduce: 0, spdef_reduce: 0, speed_reduce: 0 },
-    abilities: {
-      centripetal_force: { enabled: true, params: {} },
-      fierce_doom: { enabled: true, params: {} },
-      empty_sight: { enabled: true, params: {} },
-      focus_power: { enabled: true, params: {} },
-      magic_boost: { enabled: true, params: {} },
-      absolute_order: { enabled: true, params: {} }
-    },
+    abilities: getInitialAbilities(),
   });
 
   const [damageResult, setDamageResult] = useState<DamageResult | null>(null);
